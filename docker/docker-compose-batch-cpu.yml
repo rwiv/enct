@@ -1,0 +1,26 @@
+services:
+  enct-enc:
+    image: harbor.rwiv.xyz/private/enct:0.1.1
+    container_name: enct-enc
+    working_dir: /app
+    entrypoint: .venv/bin/python3 -m enct batch
+    environment:
+      PY_ENV: prod
+      BATCH_COMMAND: encoding
+
+      CONFIG_PATH: /mnt/app/encoding_conf.yaml
+
+      UNTF_ENDPOINT: "${UNTF_ENDPOINT}"
+      UNTF_API_KEY: "${UNTF_API_KEY}"
+      UNTF_TOPIC: "${UNTF_TOPIC}"
+    volumes:
+      - "${BASE_DIR_PATH}:/mnt/volume/app"
+      - "${CONFIG_PATH}:/mnt/app/encoding_conf.yaml"
+    labels:
+      app: enct
+      host: ${HOSTNAME}
+    logging:
+      driver: json-file
+      options:
+        labels: app,host
+        tag: "container_image={{.ImageName}},container_name={{.Name}}"
