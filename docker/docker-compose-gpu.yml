@@ -1,15 +1,12 @@
 services:
-  enct-enc:
-    image: harbor.rwiv.xyz/private/enct:0.1.1
-    container_name: enct-enc
+  enct-gpu:
+    image: enct-gpu:latest
+    container_name: enct-gpu
     working_dir: /app
     entrypoint: .venv/bin/python3 -m enct batch
     environment:
       PY_ENV: prod
-      BATCH_COMMAND: encoding
-
       CONFIG_PATH: /mnt/app/encoding_conf.yaml
-
       UNTF_ENDPOINT: "${UNTF_ENDPOINT}"
       UNTF_API_KEY: "${UNTF_API_KEY}"
       UNTF_TOPIC: "${UNTF_TOPIC}"
@@ -24,3 +21,10 @@ services:
       options:
         labels: app,host
         tag: "container_image={{.ImageName}},container_name={{.Name}}"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu,video]
