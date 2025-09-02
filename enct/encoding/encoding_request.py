@@ -32,3 +32,14 @@ class EncodingRequest(BaseModel):
     audio_codec: AudioCodec = Field(alias="audioCodec", default=AudioCodec.COPY)
     audio_bitrate_kb: int | None = Field(alias="audioBitrateKb", default=None)
     enable_gpu: bool = Field(alias="enableGpu", default=False)
+
+    def to_log_attr(self):
+        return {
+            "enable_gpu": self.enable_gpu,
+            "codec": self.video_codec.value,
+            "quality": self.video_quality,
+            "preset": self.video_preset,
+            "frame": self.video_frame,
+            "max_bitrate": self.video_max_bitrate,
+            "src_file": self.src_file_path,
+        }

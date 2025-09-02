@@ -16,7 +16,7 @@ class VideoEncoder:
         if await aios.path.exists(req.out_file_path):
             raise FileExistsError(f"Output file {req.out_file_path} already exists.")
 
-        log.info("Starting encoding", {"src_file": req.src_file_path})
+        log.info("Starting encoding", req.to_log_attr())
         start_time = asyncio.get_event_loop().time()
         command = resolve_command(req)
         process = await exec_process(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
