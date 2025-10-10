@@ -35,27 +35,27 @@ def parse_encoding_progress(data: bytes) -> ProgressInfo:
 
         # Map keys from ffmpeg format to ProgressInfo attributes
         if key == "frame":
-            fields["frame"] = check_nan(value)
+            fields["frame"] = _check_nan(value)
         elif key == "fps":
-            fields["fps"] = check_nan(value)
+            fields["fps"] = _check_nan(value)
         elif key == "stream_0_0_q":  # input=0, output=0 stream
-            fields["stream_q"] = check_nan(value)
+            fields["stream_q"] = _check_nan(value)
         elif key == "bitrate":
-            fields["bitrate_kbits"] = parse_bitrate(value)
+            fields["bitrate_kbits"] = _parse_bitrate(value)
         elif key == "total_size":
-            fields["total_size"] = check_nan(value)
+            fields["total_size"] = _check_nan(value)
         elif key == "out_time_us":
-            fields["out_time_us"] = check_nan(value)
+            fields["out_time_us"] = _check_nan(value)
         elif key == "out_time_ms":
-            fields["out_time_ms"] = check_nan(value)
+            fields["out_time_ms"] = _check_nan(value)
         elif key == "out_time":
             fields["out_time"] = value
         elif key == "dup_frames":
-            fields["dup_frames"] = check_nan(value)
+            fields["dup_frames"] = _check_nan(value)
         elif key == "drop_frames":
-            fields["drop_frames"] = check_nan(value)
+            fields["drop_frames"] = _check_nan(value)
         elif key == "speed":
-            fields["speed"] = parse_speed(value)
+            fields["speed"] = _parse_speed(value)
         elif key == "progress":
             fields["progress"] = value
         else:
@@ -64,14 +64,14 @@ def parse_encoding_progress(data: bytes) -> ProgressInfo:
     return ProgressInfo(**fields)
 
 
-def check_nan(value: str) -> str | None:
+def _check_nan(value: str) -> str | None:
     try:
         return value if value != "N/A" else None
     except ValueError:
         return None
 
 
-def parse_speed(value: str) -> float | None:
+def _parse_speed(value: str) -> float | None:
     match = re.match(r"([\d.]+)x", value)
     if not match:
         return None
@@ -81,7 +81,7 @@ def parse_speed(value: str) -> float | None:
         return None
 
 
-def parse_bitrate(value: str) -> str | None:
+def _parse_bitrate(value: str) -> str | None:
     suffix = "kbits/s"
     if not value.endswith(suffix):
         if value == "N/A":

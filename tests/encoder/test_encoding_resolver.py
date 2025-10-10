@@ -1,4 +1,4 @@
-from enct.encoding import resolve_command, EncodingRequest
+from enct.encoder import resolve_command, EncodingRequest
 
 
 def test_resolver():

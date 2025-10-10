@@ -51,11 +51,11 @@ class VideoEncoder:
         if len(stderr) > 0:
             lines = stderr.decode("utf-8").splitlines()
             for prefix in FILTER_PREFIXES:
-                lines, filtered = filter_by_prefix(lines, prefix)
+                lines, filtered = _filter_by_prefix(lines, prefix)
                 for line in filtered:
                     log.debug("Filtered stderr line", {"line": line})
             for keyword in FILTER_KEYWORDS:
-                lines, filtered = filter_by_keyword(lines, keyword)
+                lines, filtered = _filter_by_keyword(lines, keyword)
                 for line in filtered:
                     log.debug("Filtered stderr line", {"line": line})
             stderr_str = "\n".join(lines)
@@ -74,7 +74,7 @@ class VideoEncoder:
         log.info("Encoding completed", attr)
 
 
-def filter_by_prefix(lines: list[str], prefix: str) -> tuple[list[str], list[str]]:
+def _filter_by_prefix(lines: list[str], prefix: str) -> tuple[list[str], list[str]]:
     a = []
     b = []
     for line in lines:
@@ -85,7 +85,7 @@ def filter_by_prefix(lines: list[str], prefix: str) -> tuple[list[str], list[str
     return a, b
 
 
-def filter_by_keyword(lines: list[str], keyword: str) -> tuple[list[str], list[str]]:
+def _filter_by_keyword(lines: list[str], keyword: str) -> tuple[list[str], list[str]]:
     a = []
     b = []
     for line in lines:

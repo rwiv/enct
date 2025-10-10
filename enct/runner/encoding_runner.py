@@ -6,8 +6,7 @@ from aiofiles import os as aios
 from pydantic import BaseModel, constr, Field
 from pyutils import log, get_ext, path_join
 
-from .encoding_request import EncodingRequest
-from .video_encoder import VideoEncoder
+from ..encoder import EncodingRequest, VideoEncoder
 from ..common import Env
 from ..external.notifier import create_notifier
 from ..utils import listdir_recur, move_file, copy_file2, check_dir_async, stem
@@ -28,7 +27,7 @@ def read_encoding_config(config_path: str) -> EncodingConfig:
     return EncodingConfig(**yaml.load(text, Loader=yaml.FullLoader))
 
 
-class EncodingExecutor:
+class EncodingRunner:
     def __init__(self, env: Env):
         conf_path = env.config_path
         if conf_path is None:

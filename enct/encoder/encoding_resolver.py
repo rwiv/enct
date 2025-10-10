@@ -1,7 +1,7 @@
 from .encoding_request import EncodingRequest, VideoCodec, AudioCodec
 
 
-def resolve_video_codec(req: EncodingRequest) -> str:
+def _resolve_video_codec(req: EncodingRequest) -> str:
     if req.enable_gpu:
         if req.video_codec == VideoCodec.H265:
             return "hevc_nvenc"
@@ -20,7 +20,7 @@ def resolve_video_codec(req: EncodingRequest) -> str:
             raise ValueError(f"Unsupported video codec: {req.video_codec}")
 
 
-def resolve_audio_codec(req: EncodingRequest) -> str:
+def _resolve_audio_codec(req: EncodingRequest) -> str:
     if req.audio_codec == AudioCodec.AAC:
         return "aac"
     elif req.audio_codec == AudioCodec.OPUS:
@@ -31,13 +31,13 @@ def resolve_audio_codec(req: EncodingRequest) -> str:
         raise ValueError(f"Unsupported audio codec: {req.audio_codec}")
 
 
-def resolve_audio_bitrate(req: EncodingRequest) -> str | None:
+def _resolve_audio_bitrate(req: EncodingRequest) -> str | None:
     if req.audio_bitrate_kb is not None:
         return f"{req.audio_bitrate_kb}k"
     return None
 
 
-def resolve_vf(req: EncodingRequest) -> str | None:
+def _resolve_vf(req: EncodingRequest) -> str | None:
     vf = []
     if req.video_scale:
         vf.append(f"scale={req.video_scale.width}:{req.video_scale.height}")
@@ -47,10 +47,10 @@ def resolve_vf(req: EncodingRequest) -> str | None:
 
 
 def resolve_command(req: EncodingRequest) -> list[str]:
-    video_codec = resolve_video_codec(req)
-    audio_codec = resolve_audio_codec(req)
-    audio_bitrate = resolve_audio_bitrate(req)
-    vf = resolve_vf(req)
+    video_codec = _resolve_video_codec(req)
+    audio_codec = _resolve_audio_codec(req)
+    audio_bitrate = _resolve_audio_bitrate(req)
+    vf = _resolve_vf(req)
 
     command = ["ffmpeg"]
 

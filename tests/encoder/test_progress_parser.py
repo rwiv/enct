@@ -1,4 +1,4 @@
-from enct.encoding import parse_encoding_progress, ProgressInfo
+from enct.encoder import parse_encoding_progress, ProgressInfo
 
 
 def test_progress_parser():
