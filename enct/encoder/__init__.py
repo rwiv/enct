@@ -3,7 +3,6 @@ import sys
 
 from .command_resolver import FfmpegCommandResolver
 from .encoding_request import EncodingRequest
-from .progress_parser import ProgressInfo, FfmpegEncodingProgressParser
 from .video_encoder import VideoEncoder
 from .video_encoder_impl import VideoEncoderImpl
 

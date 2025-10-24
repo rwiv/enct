@@ -3,8 +3,8 @@ from abc import abstractmethod
 
 from pydantic import BaseModel
 
-from .output_filter import FilteredStderr
 from .encoding_request import EncodingRequest
+from ..ffmpeg import FilteredStderr
 
 
 class EncodingResult(BaseModel):

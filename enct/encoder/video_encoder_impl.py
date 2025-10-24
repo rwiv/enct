@@ -7,14 +7,13 @@ from pyutils import log, exec_process, cur_duration, check_returncode
 
 from .command_resolver import FfmpegCommandResolver
 from .encoding_request import EncodingRequest
-from .output_filter import FfmpegOutputFilter
-from .progress_parser import FfmpegEncodingProgressParser
 from .video_encoder import EncodingResult, VideoEncoder
+from ..ffmpeg import FfmpegEncodingOutputFilter, FfmpegEncodingProgressParser
 
 
 class VideoEncoderImpl(VideoEncoder):
     def __init__(self):
-        self.__out_filter = FfmpegOutputFilter()
+        self.__out_filter = FfmpegEncodingOutputFilter()
         self.__cmd_resolver = FfmpegCommandResolver()
         self.__parser = FfmpegEncodingProgressParser()
 

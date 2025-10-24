@@ -13,7 +13,12 @@ class FfmpegCommandResolver:
         if req.enable_gpu:
             command.extend(["-hwaccel", "nvdec", "-hwaccel_output_format", "cuda"])
 
-        command.extend(["-i", req.src_file_path, "-c:v", video_codec])
+        command.extend(["-i", req.src_file_path])
+
+        if req.time_range is not None:
+            command.extend(["-ss", f"{req.time_range.start:.2f}", "-to", f"{req.time_range.end:.2f}"])
+
+        command.extend(["-c:v", video_codec])
 
         if req.video_quality is not None:
             if req.enable_gpu:

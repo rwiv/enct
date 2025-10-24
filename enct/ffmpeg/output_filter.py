@@ -2,7 +2,10 @@ from pydantic import BaseModel
 
 
 # fmt: off
-FILTER_PREFIXES = ["Svt[info]", "Svt[warn]"]
+FILTER_PREFIXES = [
+    "Svt[info]",
+    "Svt[warn]",
+]
 FILTER_KEYWORDS = [
     "Last message repeated",
     "error while decoding",
@@ -34,7 +37,7 @@ class FilteredStderr(BaseModel):
     filtered: str
 
 
-class FfmpegOutputFilter:
+class FfmpegEncodingOutputFilter:
     def filtered_stderr(self, stderr: bytes) -> FilteredStderr | None:
         if len(stderr) == 0:
             return None

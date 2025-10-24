@@ -20,6 +20,11 @@ class VideoScale(BaseModel):
     height: int
 
 
+class TimeRange(BaseModel):
+    start: float
+    end: float
+
+
 class EncodingRequest(BaseModel):
     src_file_path: str = Field(alias="srcFilePath")
     out_file_path: str = Field(alias="outFilePath")
@@ -31,6 +36,7 @@ class EncodingRequest(BaseModel):
     video_max_bitrate: int | None = Field(alias="videoMaxBitrate", default=None)
     audio_codec: AudioCodec = Field(alias="audioCodec", default=AudioCodec.COPY)
     audio_bitrate_kb: int | None = Field(alias="audioBitrateKb", default=None)
+    time_range: TimeRange | None = Field(alias="timeRange", default=None)
     enable_gpu: bool = Field(alias="enableGpu", default=False)
 
     def to_log_attr(self):

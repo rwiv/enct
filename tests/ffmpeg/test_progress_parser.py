@@ -1,4 +1,4 @@
-from enct.encoder import ProgressInfo, FfmpegEncodingProgressParser
+from enct.ffmpeg import ProgressInfo, FfmpegEncodingProgressParser
 
 
 def test_progress_parser():
