@@ -1,10 +1,12 @@
 import os
 import sys
 
-from .quality_seeker import QualitySeeker
+from .quality_estimator import EncodingQualityEstimator
+from .size_rate_checker import SizeRateChecker, SizeRateCheckerFake
 
 targets = [
-    "quality_seeker",
+    "quality_estimator",
+    "size_rate_checker",
 ]
 if os.getenv("PY_ENV") != "prod":
     for name in list(sys.modules.keys()):

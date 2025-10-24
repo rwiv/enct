@@ -5,7 +5,7 @@ from aiofiles import os as aios
 import pytest
 from pyutils import find_project_root, path_join, log
 
-from enct.encoder import VideoEncoder, EncodingRequest
+from enct.encoder import EncodingRequest, VideoEncoderImpl
 
 base_dir_path = path_join(find_project_root(), "dev", "test")
 
@@ -14,7 +14,7 @@ base_dir_path = path_join(find_project_root(), "dev", "test")
 @pytest.mark.asyncio
 async def test_video_encoder():
     log.set_level(logging.DEBUG)
-    encoder = VideoEncoder()
+    encoder = VideoEncoderImpl()
     src_file_path = path_join(base_dir_path, "assets", "enc", "test.mp4")
     out_file_path = path_join(base_dir_path, "out", "test.mp4")
     await aios.makedirs(Path(out_file_path).parent, exist_ok=True)

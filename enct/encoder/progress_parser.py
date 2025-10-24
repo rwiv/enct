@@ -18,50 +18,51 @@ class ProgressInfo(BaseModel):
     progress: str | None = None
 
 
-def parse_encoding_progress(data: bytes) -> ProgressInfo:
-    lines = data.decode().splitlines()
-    fields = {}
+class FfmpegEncodingProgressParser:
+    def parse(self, data: bytes) -> ProgressInfo:
+        lines = data.decode().splitlines()
+        fields = {}
 
-    for line in lines:
-        if not line.strip():
-            continue
+        for line in lines:
+            if not line.strip():
+                continue
 
-        if "=" not in line:
-            raise ValueError(f"invalid format: {line}")
+            if "=" not in line:
+                raise ValueError(f"invalid format: {line}")
 
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip()
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip()
 
-        # Map keys from ffmpeg format to ProgressInfo attributes
-        if key == "frame":
-            fields["frame"] = _check_nan(value)
-        elif key == "fps":
-            fields["fps"] = _check_nan(value)
-        elif key == "stream_0_0_q":  # input=0, output=0 stream
-            fields["stream_q"] = _check_nan(value)
-        elif key == "bitrate":
-            fields["bitrate_kbits"] = _parse_bitrate(value)
-        elif key == "total_size":
-            fields["total_size"] = _check_nan(value)
-        elif key == "out_time_us":
-            fields["out_time_us"] = _check_nan(value)
-        elif key == "out_time_ms":
-            fields["out_time_ms"] = _check_nan(value)
-        elif key == "out_time":
-            fields["out_time"] = value
-        elif key == "dup_frames":
-            fields["dup_frames"] = _check_nan(value)
-        elif key == "drop_frames":
-            fields["drop_frames"] = _check_nan(value)
-        elif key == "speed":
-            fields["speed"] = _parse_speed(value)
-        elif key == "progress":
-            fields["progress"] = value
-        else:
-            raise ValueError(f"unknown key: {key}")
+            # Map keys from ffmpeg format to ProgressInfo attributes
+            if key == "frame":
+                fields["frame"] = _check_nan(value)
+            elif key == "fps":
+                fields["fps"] = _check_nan(value)
+            elif key == "stream_0_0_q":  # input=0, output=0 stream
+                fields["stream_q"] = _check_nan(value)
+            elif key == "bitrate":
+                fields["bitrate_kbits"] = _parse_bitrate(value)
+            elif key == "total_size":
+                fields["total_size"] = _check_nan(value)
+            elif key == "out_time_us":
+                fields["out_time_us"] = _check_nan(value)
+            elif key == "out_time_ms":
+                fields["out_time_ms"] = _check_nan(value)
+            elif key == "out_time":
+                fields["out_time"] = value
+            elif key == "dup_frames":
+                fields["dup_frames"] = _check_nan(value)
+            elif key == "drop_frames":
+                fields["drop_frames"] = _check_nan(value)
+            elif key == "speed":
+                fields["speed"] = _parse_speed(value)
+            elif key == "progress":
+                fields["progress"] = value
+            else:
+                raise ValueError(f"unknown key: {key}")
 
-    return ProgressInfo(**fields)
+        return ProgressInfo(**fields)
 
 
 def _check_nan(value: str) -> str | None:

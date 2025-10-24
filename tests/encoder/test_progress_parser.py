@@ -1,7 +1,8 @@
-from enct.encoder import parse_encoding_progress, ProgressInfo
+from enct.encoder import ProgressInfo, FfmpegEncodingProgressParser
 
 
 def test_progress_parser():
+    parser = FfmpegEncodingProgressParser()
     raw_data = b"""
     frame=123
     fps=24.0
@@ -30,4 +31,4 @@ def test_progress_parser():
         speed=1.03,
         progress="continue",
     )
-    assert parse_encoding_progress(raw_data) == expected
+    assert parser.parse(raw_data) == expected

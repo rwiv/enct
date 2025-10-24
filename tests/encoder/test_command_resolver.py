@@ -1,7 +1,8 @@
-from enct.encoder import resolve_command, EncodingRequest
+from enct.encoder import EncodingRequest, FfmpegCommandResolver
 
 
 def test_resolver():
+    resolver = FfmpegCommandResolver()
     src_file_path = "input.mp4"
     out_file_path = "output.mp4"
 
@@ -24,7 +25,7 @@ def test_resolver():
     expected.extend(["-vf", "scale=1280:720,fps=30"])
     expected.extend(["-c:a", "libopus", "-b:a", "128k"])
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolve_command(req) == expected
+    assert resolver.resolve(req) == expected
 
     req = EncodingRequest(
         srcFilePath=src_file_path,
@@ -43,7 +44,7 @@ def test_resolver():
     expected.extend(["-crf", "23", "-preset", "4"])
     expected.extend(["-c:a", "libopus", "-b:a", "128k"])
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolve_command(req) == expected
+    assert resolver.resolve(req) == expected
 
     req = EncodingRequest(
         srcFilePath=src_file_path,
@@ -55,7 +56,7 @@ def test_resolver():
     )
     expected = ["ffmpeg", "-i", src_file_path, "-c:v", "copy", "-c:a", "copy"]
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolve_command(req) == expected
+    assert resolver.resolve(req) == expected
 
     req = EncodingRequest(
         srcFilePath=src_file_path,
@@ -67,7 +68,7 @@ def test_resolver():
     )
     expected = ["ffmpeg", "-i", src_file_path, "-c:v", "copy", "-vf", "fps=30", "-c:a", "copy"]
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolve_command(req) == expected
+    assert resolver.resolve(req) == expected
 
     req = EncodingRequest(
         srcFilePath=src_file_path,
@@ -87,4 +88,4 @@ def test_resolver():
     expected.extend(["-svtav1-params", f"mbr=3000"])
     expected.extend(["-c:a", "copy"])
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolve_command(req) == expected
+    assert resolver.resolve(req) == expected

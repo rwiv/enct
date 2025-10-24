@@ -6,8 +6,8 @@ from aiofiles import os as aios
 from pydantic import BaseModel, constr, Field
 from pyutils import log, get_ext, path_join
 
-from ..encoder import EncodingRequest, VideoEncoder
 from ..common import Env
+from ..encoder import EncodingRequest, VideoEncoderImpl
 from ..external.notifier import create_notifier
 from ..utils import listdir_recur, move_file, copy_file2, check_dir_async, stem
 
@@ -37,7 +37,7 @@ class EncodingRunner:
         self.out_dir_path = self.conf.out_dir_path
         self.tmp_dir_path = self.conf.tmp_dir_path
         self.notifier = create_notifier(env=env.env, conf=env.untf)
-        self.encoder = VideoEncoder()
+        self.encoder = VideoEncoderImpl()
 
     async def run(self):
         if not await aios.path.exists(self.tmp_dir_path):
@@ -55,10 +55,15 @@ class EncodingRunner:
             try:
                 tmp_out_path = path_join(self.tmp_dir_path, f"{file_stem}_out.{ext}")
 
-                request: EncodingRequest = self.conf.request.copy()
+                request: EncodingRequest = self.conf.request.model_copy()
                 request.src_file_path = tmp_src_path
                 request.out_file_path = tmp_out_path
-                await self.encoder.encode(request, logging=False)
+                enc_ret = await self.encoder.encode(request, logging=False)
+                if enc_ret.stderr is not None and len(enc_ret.stderr.matched) > 0:
+                    for line in enc_ret.stderr.matched:
+                        log.debug("Filtered stderr line", {"line": line})
+                log.info("Encoding completed", enc_ret.to_attr())
+
                 await aios.remove(tmp_src_path)
 
                 out_file_path = path_join(self.out_dir_path, sub_path)

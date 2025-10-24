@@ -1,6 +1,46 @@
 from .encoding_request import EncodingRequest, VideoCodec, AudioCodec
 
 
+class FfmpegCommandResolver:
+    def resolve(self, req: EncodingRequest) -> list[str]:
+        video_codec = _resolve_video_codec(req)
+        audio_codec = _resolve_audio_codec(req)
+        audio_bitrate = _resolve_audio_bitrate(req)
+        vf = _resolve_vf(req)
+
+        command = ["ffmpeg"]
+
+        if req.enable_gpu:
+            command.extend(["-hwaccel", "nvdec", "-hwaccel_output_format", "cuda"])
+
+        command.extend(["-i", req.src_file_path, "-c:v", video_codec])
+
+        if req.video_quality is not None:
+            if req.enable_gpu:
+                command.extend(["-cq", str(req.video_quality)])
+            else:
+                command.extend(["-crf", str(req.video_quality)])
+        if req.video_preset:
+            command.extend(["-preset", req.video_preset])
+
+        if req.video_max_bitrate is not None and not req.enable_gpu:
+            if req.video_codec == VideoCodec.AV1:
+                command.extend(["-svtav1-params", f"mbr={req.video_max_bitrate}"])
+            elif req.video_codec == VideoCodec.H265:
+                command.extend(["-x265-params", f"vbv-maxrate={req.video_max_bitrate}:vbv-bufsize={req.video_max_bitrate}"])
+
+        if vf:
+            command.extend(["-vf", vf])
+
+        command.extend(["-c:a", audio_codec])
+        if audio_bitrate:
+            command.extend(["-b:a", audio_bitrate])
+
+        command.extend(["-v", "warning", "-progress", "-", req.out_file_path])
+
+        return command
+
+
 def _resolve_video_codec(req: EncodingRequest) -> str:
     if req.enable_gpu:
         if req.video_codec == VideoCodec.H265:
@@ -44,42 +84,3 @@ def _resolve_vf(req: EncodingRequest) -> str | None:
     if req.video_frame:
         vf.append(f"fps={req.video_frame}")
     return ",".join(vf) if vf else None
-
-
-def resolve_command(req: EncodingRequest) -> list[str]:
-    video_codec = _resolve_video_codec(req)
-    audio_codec = _resolve_audio_codec(req)
-    audio_bitrate = _resolve_audio_bitrate(req)
-    vf = _resolve_vf(req)
-
-    command = ["ffmpeg"]
-
-    if req.enable_gpu:
-        command.extend(["-hwaccel", "nvdec", "-hwaccel_output_format", "cuda"])
-
-    command.extend(["-i", req.src_file_path, "-c:v", video_codec])
-
-    if req.video_quality is not None:
-        if req.enable_gpu:
-            command.extend(["-cq", str(req.video_quality)])
-        else:
-            command.extend(["-crf", str(req.video_quality)])
-    if req.video_preset:
-        command.extend(["-preset", req.video_preset])
-
-    if req.video_max_bitrate is not None and not req.enable_gpu:
-        if req.video_codec == VideoCodec.AV1:
-            command.extend(["-svtav1-params", f"mbr={req.video_max_bitrate}"])
-        elif req.video_codec == VideoCodec.H265:
-            command.extend(["-x265-params", f"vbv-maxrate={req.video_max_bitrate}:vbv-bufsize={req.video_max_bitrate}"])
-
-    if vf:
-        command.extend(["-vf", vf])
-
-    command.extend(["-c:a", audio_codec])
-    if audio_bitrate:
-        command.extend(["-b:a", audio_bitrate])
-
-    command.extend(["-v", "warning", "-progress", "-", req.out_file_path])
-
-    return command

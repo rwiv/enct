@@ -1,16 +1,19 @@
 import os
 import sys
 
+from .command_resolver import FfmpegCommandResolver
 from .encoding_request import EncodingRequest
-from .encoding_resolver import resolve_command
-from .progress_parser import ProgressInfo, parse_encoding_progress
+from .progress_parser import ProgressInfo, FfmpegEncodingProgressParser
 from .video_encoder import VideoEncoder
+from .video_encoder_impl import VideoEncoderImpl
 
 targets = [
+    "command_resolver",
     "encoding_request",
-    "encoding_resolver",
+    "output_filter",
     "progress_parser",
     "video_encoder",
+    "video_encoder_impl",
 ]
 if os.getenv("PY_ENV") != "prod":
     for name in list(sys.modules.keys()):
