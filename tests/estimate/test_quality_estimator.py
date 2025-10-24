@@ -6,7 +6,8 @@ dfp = "dummy.mp4"  # dummy_file_path
 failure_message = "Quality estimation failed"
 
 
-def test_tc_success_01_finds_optimal_quality_in_the_middle():
+# 1. 성공 케이스 (Happy Path)
+def test_finds_optimal_quality_in_the_middle():
     """
     TC-SUCCESS-01: 목표 범위에 여러 품질 값이 해당할 때 가장 높은 값을 반환하는지 테스트
     """
@@ -28,7 +29,8 @@ def test_tc_success_01_finds_optimal_quality_in_the_middle():
     assert result_quality == 16
 
 
-def test_tc_edge_01_raises_error_when_all_rates_are_too_low():
+# 2. 엣지 케이스 (Edge Cases)
+def test_raises_error_when_all_rates_are_too_low():
     """
     TC-EDGE-01: 모든 품질 값의 결과(용량 비율)가 목표 범위보다 낮을 때 예외 발생 테스트
     """
@@ -42,7 +44,7 @@ def test_tc_edge_01_raises_error_when_all_rates_are_too_low():
         estimator.estimate(dfp, (10, 20), (0.8, 1.0))
 
 
-def test_tc_edge_02_raises_error_when_all_rates_are_too_high():
+def test_raises_error_when_all_rates_are_too_high():
     """
     TC-EDGE-02: 모든 품질 값의 결과(용량 비율)가 목표 범위보다 높을 때 예외 발생 테스트
     """
@@ -56,7 +58,8 @@ def test_tc_edge_02_raises_error_when_all_rates_are_too_high():
         estimator.estimate(dfp, (10, 20), (0.2, 0.4))
 
 
-def test_tc_invalid_01_raises_error_for_inverted_quality_range():
+# 3. 오류 처리 케이스 (Error Handling)
+def test_raises_error_for_inverted_quality_range():
     """
     TC-INVALID-01: 품질 범위가 거꾸로 (start > end) 지정되었을 때 예외 발생 테스트
     """
@@ -69,7 +72,7 @@ def test_tc_invalid_01_raises_error_for_inverted_quality_range():
         estimator.estimate(dfp, (20, 10), (0.4, 0.6))
 
 
-def test_tc_invalid_02_raises_error_for_inverted_size_rate_range():
+def test_raises_error_for_inverted_size_rate_range():
     """
     TC-INVALID-02: 용량 비율 범위가 거꾸로 (start > end) 지정되었을 때 예외 발생 테스트
     """

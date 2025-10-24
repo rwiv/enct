@@ -19,12 +19,3 @@ class SizeRateCheckerFake(SizeRateChecker):
 
     def check(self, file_path: str, quality: int) -> float:
         return self.__out[quality]
-
-
-## TODO: implement this
-class SizeRateCheckerImpl(SizeRateChecker):
-    def __init__(self):
-        pass
-
-    def check(self, file_path: str, quality: int) -> float:
-        return -1

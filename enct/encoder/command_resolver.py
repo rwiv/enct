@@ -16,7 +16,7 @@ class FfmpegCommandResolver:
         command.extend(["-i", req.src_file_path])
 
         if req.time_range is not None:
-            command.extend(["-ss", f"{req.time_range.start:.2f}", "-to", f"{req.time_range.end:.2f}"])
+            command.extend(["-ss", req.time_range.start, "-to", req.time_range.end])
 
         command.extend(["-c:v", video_codec])
 

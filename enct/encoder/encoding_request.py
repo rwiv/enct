@@ -21,8 +21,8 @@ class VideoScale(BaseModel):
 
 
 class TimeRange(BaseModel):
-    start: float
-    end: float
+    start: str
+    end: str
 
 
 class EncodingRequest(BaseModel):
