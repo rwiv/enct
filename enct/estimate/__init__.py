@@ -2,7 +2,8 @@ import os
 import sys
 
 from .quality_estimator import EncodingQualityEstimator
-from .size_rate_checker import SizeRateChecker, SizeRateCheckerFake
+from .size_ratio_checker import SizeRatioChecker, SizeRatioCheckerFake
+from .size_ratio_checker_impl import SizeRatioCheckerImpl
 
 targets = [
     "quality_estimator",

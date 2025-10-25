@@ -16,6 +16,7 @@ from .file import (
     copy_file2,
     open_tar,
     utime,
+    divide_size_ratio,
 )
 from .time_range import divide_time_range
 

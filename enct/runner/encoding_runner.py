@@ -55,10 +55,12 @@ class EncodingRunner:
             try:
                 tmp_out_path = path_join(self.tmp_dir_path, f"{file_stem}_out.{ext}")
 
-                request: EncodingRequest = self.conf.request.model_copy()
-                request.src_file_path = tmp_src_path
-                request.out_file_path = tmp_out_path
-                enc_ret = await self.encoder.encode(request, logging=False)
+                req = self.conf.request.model_copy()
+                req.src_file_path = tmp_src_path
+                req.out_file_path = tmp_out_path
+                log.info("Starting encoding", req.to_log_attr())
+
+                enc_ret = await self.encoder.encode(req, logging=False)
                 if enc_ret.stderr is not None and len(enc_ret.stderr.matched) > 0:
                     for line in enc_ret.stderr.matched:
                         log.debug("Filtered stderr line", {"line": line})

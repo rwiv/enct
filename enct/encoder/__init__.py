@@ -2,7 +2,7 @@ import os
 import sys
 
 from .command_resolver import FfmpegCommandResolver
-from .encoding_request import EncodingRequest
+from .encoding_request import EncodingRequest, VideoCodec, VideoScale, AudioCodec, TimeRange
 from .video_encoder import VideoEncoder
 from .video_encoder_impl import VideoEncoderImpl
 

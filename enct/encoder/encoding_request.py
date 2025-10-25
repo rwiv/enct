@@ -31,9 +31,9 @@ class EncodingRequest(BaseModel):
     video_codec: VideoCodec = Field(alias="videoCodec", default=VideoCodec.COPY)
     video_quality: int | None = Field(alias="videoQuality", default=None)
     video_preset: str | None = Field(alias="videoPreset", default=None)
+    video_max_bitrate: int | None = Field(alias="videoMaxBitrate", default=None)
     video_scale: VideoScale | None = Field(alias="videoScale", default=None)
     video_frame: int | None = Field(alias="videoFrame", default=None)
-    video_max_bitrate: int | None = Field(alias="videoMaxBitrate", default=None)
     audio_codec: AudioCodec = Field(alias="audioCodec", default=AudioCodec.COPY)
     audio_bitrate_kb: int | None = Field(alias="audioBitrateKb", default=None)
     time_range: TimeRange | None = Field(alias="timeRange", default=None)
@@ -49,3 +49,16 @@ class EncodingRequest(BaseModel):
             "max_bitrate": self.video_max_bitrate,
             "src_file": self.src_file_path,
         }
+
+    def to_copy_req(self) -> "EncodingRequest":
+        copied = self.model_copy()
+        copied.video_codec = VideoCodec.COPY
+        copied.video_quality = None
+        copied.video_preset = None
+        copied.video_max_bitrate = None
+        copied.video_scale = None
+        copied.video_frame = None
+        copied.audio_codec = AudioCodec.COPY
+        copied.audio_bitrate_kb = None
+        copied.enable_gpu = False
+        return copied

@@ -9,6 +9,7 @@ from .command_resolver import FfmpegCommandResolver
 from .encoding_request import EncodingRequest
 from .video_encoder import EncodingResult, VideoEncoder
 from ..ffmpeg import FfmpegEncodingOutputFilter, FfmpegEncodingProgressParser
+from ..utils import divide_size_ratio
 
 
 class VideoEncoderImpl(VideoEncoder):
@@ -21,7 +22,6 @@ class VideoEncoderImpl(VideoEncoder):
         if await aios.path.exists(req.out_file_path):
             raise FileExistsError(f"Output file {req.out_file_path} already exists.")
 
-        log.info("Starting encoding", req.to_log_attr())
         start_time = asyncio.get_event_loop().time()
 
         command = self.__cmd_resolver.resolve(req)
@@ -62,10 +62,11 @@ class VideoEncoderImpl(VideoEncoder):
             raise RuntimeError("Encoding failed with error")
 
         return EncodingResult(
-            output_file=req.out_file_path,
+            out_file_path=req.out_file_path,
             quantizer_avg=stream_q_sum / stream_q_cnt if stream_q_cnt > 0 else None,
             bitrate_avg=bitrate_sum / bitrate_cnt if bitrate_cnt > 0 else None,
             speed_avg=speed_sum / speed_cnt if speed_cnt > 0 else None,
             duration=cur_duration(start_time),
             stderr=stderr,
+            size_ratio=await divide_size_ratio(req.out_file_path, req.src_file_path),
         )

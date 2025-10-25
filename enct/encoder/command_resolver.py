@@ -85,7 +85,10 @@ def _resolve_audio_bitrate(req: EncodingRequest) -> str | None:
 def _resolve_vf(req: EncodingRequest) -> str | None:
     vf = []
     if req.video_scale:
-        vf.append(f"scale={req.video_scale.width}:{req.video_scale.height}")
+        if req.enable_gpu:
+            vf.append(f"scale_cuda={req.video_scale.width}:{req.video_scale.height}")
+        else:
+            vf.append(f"scale={req.video_scale.width}:{req.video_scale.height}")
     if req.video_frame:
         vf.append(f"fps={req.video_frame}")
     return ",".join(vf) if vf else None

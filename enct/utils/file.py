@@ -93,3 +93,12 @@ def _open_tar(tar_path: str, out_dir_path: str):
 
 async def open_tar(tar_path: str, out_dir_path: str):
     await asyncio.to_thread(_open_tar, tar_path, out_dir_path)
+
+
+async def divide_size_ratio(a_path: str, b_path: str):
+    a_stat, b_stat = await asyncio.gather(aios.stat(a_path), aios.stat(b_path))
+
+    if b_stat.st_size == 0:
+        raise ValueError("Cannot divide by 0")
+
+    return a_stat.st_size / b_stat.st_size

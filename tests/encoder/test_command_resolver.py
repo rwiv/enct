@@ -1,7 +1,7 @@
 from enct.encoder import EncodingRequest, FfmpegCommandResolver
 
 
-def test_resolver():
+def test_command_resolver():
     resolver = FfmpegCommandResolver()
     src_file_path = "input.mp4"
     out_file_path = "output.mp4"
@@ -22,7 +22,7 @@ def test_resolver():
     expected = ["ffmpeg", "-hwaccel", "nvdec", "-hwaccel_output_format", "cuda", "-i", src_file_path]
     expected.extend(["-c:v", "hevc_nvenc"])
     expected.extend(["-cq", "23", "-preset", "p4"])
-    expected.extend(["-vf", "scale=1280:720,fps=30"])
+    expected.extend(["-vf", "scale_cuda=1280:720,fps=30"])
     expected.extend(["-c:a", "libopus", "-b:a", "128k"])
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
     assert resolver.resolve(req) == expected

@@ -1,13 +1,14 @@
-from .size_rate_checker import SizeRateChecker
+from .size_ratio_checker import SizeRatioChecker
+from ..encoder import EncodingRequest
 
 
 class EncodingQualityEstimator:
-    def __init__(self, checker: SizeRateChecker):
+    def __init__(self, checker: SizeRatioChecker):
         self.__checker = checker
 
-    def estimate(
+    async def estimate(
         self,
-        file_path: str,
+        req: EncodingRequest,
         quality_range: tuple[int, int],
         size_rate_range: tuple[float, float],
     ) -> int:
@@ -18,22 +19,23 @@ class EncodingQualityEstimator:
         left, right = 0, len(quality_list) - 1
         best_quality = -1
 
+        # 이진 탐색으로 적절한 quality 값 탐색
         while left <= right:
             mid = (left + right) // 2
             tgt_quality = quality_list[mid]
 
-            size_ratio = self.__checker.check(file_path, tgt_quality)
+            size_ratio = await self.__checker.check(req, tgt_quality)
 
             if size_rate_range[0] <= size_ratio <= size_rate_range[1]:
-                # 목표 범위에 맞는 품질을 찾음
-                # 그러나 더 적절한 품질(더 높은 품질)이 있을 수 있으므로 탐색을 계속
+                # 목표 범위에 맞는 quality 값을 찾음
+                # 그러나 더 최적의 quality 값이 있을 수 있으므로 탐색을 계속
                 best_quality = tgt_quality
-                left = mid + 1  # 더 높은 품질 쪽으로 탐색을 계속 진행
+                left = mid + 1  # 더 높은 쪽으로 탐색을 계속 진행
             elif size_ratio < size_rate_range[0]:
-                # 용량 비율이 너무 낮음 (품질이 너무 낮음) -> 품질을 높여야 함
+                # 용량 비율이 너무 낮음 (quality 값이 너무 낮음) -> quality 값을 높여야 함
                 left = mid + 1
             else:  # size_rate > size_rate_range[1]
-                # 용량 비율이 너무 높음 (품질이 너무 높음) -> 품질을 낮춰야 함
+                # 용량 비율이 너무 높음 (quality 값이 너무 높음) -> quality 값을 낮춰야 함
                 right = mid - 1
 
         if best_quality != -1:
