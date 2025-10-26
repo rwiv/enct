@@ -18,6 +18,7 @@ async def test_size_ratio_checker_impl():
     await aios.makedirs(tmp_dir_path, exist_ok=True)
 
     opts = EncodingOptions(
+        enableGpu=True,
         videoCodec=VideoCodec.AV1,
         videoQuality=48,
         videoPreset="p4",
@@ -26,7 +27,6 @@ async def test_size_ratio_checker_impl():
         # videoFrame=None,
         audioCodec=AudioCodec.COPY,
         audioBitrateKb=None,
-        enableGpu=True,
     )
     enc_req = EncodingRequest(
         src_file_path=path_join(src_dir_path, "test.mp4"),

@@ -38,6 +38,7 @@ def new_opts(
     video_max_bitrate: int | None = None,
 ) -> EncodingOptions:
     return EncodingOptions(
+        enableGpu=enabled_gpu,
         videoCodec=VideoCodec.AV1,
         videoQuality=video_quality,
         videoPreset=video_preset,
@@ -46,5 +47,4 @@ def new_opts(
         videoMaxBitrate=video_max_bitrate,
         audioCodec=AudioCodec.COPY,
         audioBitrateKb=128,
-        enableGpu=enabled_gpu,
     )

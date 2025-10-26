@@ -26,6 +26,7 @@ async def test_video_encoder():
         enableGpu=True,
     )
     # opts = EncodingOptions(
+    #     enableGpu=True,
     #     videoCodec=VideoCodec.AV1,
     #     videoQuality=48,
     #     videoPreset="p4",
@@ -33,7 +34,6 @@ async def test_video_encoder():
     #     videoFrame=30,
     #     audioCodec=AudioCodec.COPY,
     #     audioBitrateKb=None,
-    #     enableGpu=True,
     # )
     result = await encoder.encode(EncodingRequest(src_file_path=src_file_path, out_file_path=out_file_path, opts=opts))
     await aios.remove(out_file_path)

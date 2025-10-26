@@ -1,4 +1,4 @@
-from enct.encoder import EncodingRequest, FfmpegCommandResolver, EncodingOptions
+from enct.encoder import EncodingRequest, FfmpegCommandResolver, EncodingOptions, VideoCodec, VideoScale, AudioCodec
 
 src_file_path = "input.mp4"
 out_file_path = "output.mp4"
@@ -12,15 +12,15 @@ def test_command_resolver():
     resolver = FfmpegCommandResolver()
 
     opts = EncodingOptions(
-        videoCodec="h265",  # type: ignore
+        enableGpu=True,
+        videoCodec=VideoCodec.H265,
         videoQuality=23,
         videoPreset="p4",
-        videoScale={"width": 1280, "height": 720},  # type: ignore
+        videoScale=VideoScale(width=1280, height=720),
         videoFrame=30,
         videoMaxBitrate=3000,
-        audioCodec="opus",  # type: ignore
+        audioCodec=AudioCodec.OPUS,
         audioBitrateKb=128,
-        enableGpu=True,
     )
     expected = ["ffmpeg", "-hwaccel", "nvdec", "-hwaccel_output_format", "cuda", "-i", src_file_path]
     expected.extend(["-c:v", "hevc_nvenc"])
@@ -31,14 +31,14 @@ def test_command_resolver():
     assert resolver.resolve(ereq(opts)) == expected
 
     opts = EncodingOptions(
-        videoCodec="av1",  # type: ignore
+        enableGpu=False,
+        videoCodec=VideoCodec.AV1,
         videoQuality=23,
         videoPreset="4",
         videoScale=None,
         videoFrame=None,
-        audioCodec="opus",  # type: ignore
+        audioCodec=AudioCodec.OPUS,
         audioBitrateKb=128,
-        enableGpu=False,
     )
     expected = ["ffmpeg", "-i", src_file_path]
     expected.extend(["-c:v", "libsvtav1"])
@@ -48,34 +48,34 @@ def test_command_resolver():
     assert resolver.resolve(ereq(opts)) == expected
 
     opts = EncodingOptions(
+        enableGpu=False,
         videoScale=None,
         videoFrame=None,
         audioBitrateKb=None,
-        enableGpu=False,
     )
     expected = ["ffmpeg", "-i", src_file_path, "-c:v", "copy", "-c:a", "copy"]
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
     assert resolver.resolve(ereq(opts)) == expected
 
     opts = EncodingOptions(
+        enableGpu=False,
         videoScale=None,
         videoFrame=30,
         audioBitrateKb=None,
-        enableGpu=False,
     )
     expected = ["ffmpeg", "-i", src_file_path, "-c:v", "copy", "-vf", "fps=30", "-c:a", "copy"]
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
     assert resolver.resolve(ereq(opts)) == expected
 
     opts = EncodingOptions(
-        videoCodec="av1",  # type: ignore
+        enableGpu=False,
+        videoCodec=VideoCodec.AV1,
         videoQuality=23,
         videoPreset="4",
         videoScale=None,
         videoFrame=None,
         videoMaxBitrate=3000,
         audioBitrateKb=None,
-        enableGpu=False,
     )
     expected = ["ffmpeg", "-i", src_file_path]
     expected.extend(["-c:v", "libsvtav1"])

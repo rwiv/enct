@@ -30,6 +30,7 @@ class TimeRange(BaseModel):
 
 
 class EncodingOptions(BaseModel):
+    enable_gpu: bool = Field(alias="enableGpu", default=False)
     video_codec: VideoCodec = Field(alias="videoCodec", default=VideoCodec.COPY)
     video_quality: int | None = Field(alias="videoQuality", default=None)
     video_preset: str | None = Field(alias="videoPreset", default=None)
@@ -39,7 +40,6 @@ class EncodingOptions(BaseModel):
     audio_codec: AudioCodec = Field(alias="audioCodec", default=AudioCodec.COPY)
     audio_bitrate_kb: int | None = Field(alias="audioBitrateKb", default=None)
     time_range: TimeRange | None = Field(alias="timeRange", default=None)
-    enable_gpu: bool = Field(alias="enableGpu", default=False)
 
     def to_copy_opts(self) -> "EncodingOptions":
         copied = self.model_copy()
