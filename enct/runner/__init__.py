@@ -1,6 +1,7 @@
 import os
 import sys
 
+from .encoding_config import EncodingConfig, EstimateConfig
 from .encoding_runner import EncodingRunner
 
 targets = [

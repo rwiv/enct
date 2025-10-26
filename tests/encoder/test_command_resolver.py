@@ -1,14 +1,17 @@
-from enct.encoder import EncodingRequest, FfmpegCommandResolver
+from enct.encoder import EncodingRequest, FfmpegCommandResolver, EncodingOptions
+
+src_file_path = "input.mp4"
+out_file_path = "output.mp4"
+
+
+def ereq(opts: EncodingOptions):
+    return EncodingRequest(src_file_path=src_file_path, out_file_path=out_file_path, opts=opts)
 
 
 def test_command_resolver():
     resolver = FfmpegCommandResolver()
-    src_file_path = "input.mp4"
-    out_file_path = "output.mp4"
 
-    req = EncodingRequest(
-        srcFilePath=src_file_path,
-        outFilePath=out_file_path,
+    opts = EncodingOptions(
         videoCodec="h265",  # type: ignore
         videoQuality=23,
         videoPreset="p4",
@@ -25,11 +28,9 @@ def test_command_resolver():
     expected.extend(["-vf", "scale_cuda=1280:720,fps=30"])
     expected.extend(["-c:a", "libopus", "-b:a", "128k"])
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolver.resolve(req) == expected
+    assert resolver.resolve(ereq(opts)) == expected
 
-    req = EncodingRequest(
-        srcFilePath=src_file_path,
-        outFilePath=out_file_path,
+    opts = EncodingOptions(
         videoCodec="av1",  # type: ignore
         videoQuality=23,
         videoPreset="4",
@@ -44,11 +45,9 @@ def test_command_resolver():
     expected.extend(["-crf", "23", "-preset", "4"])
     expected.extend(["-c:a", "libopus", "-b:a", "128k"])
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolver.resolve(req) == expected
+    assert resolver.resolve(ereq(opts)) == expected
 
-    req = EncodingRequest(
-        srcFilePath=src_file_path,
-        outFilePath=out_file_path,
+    opts = EncodingOptions(
         videoScale=None,
         videoFrame=None,
         audioBitrateKb=None,
@@ -56,11 +55,9 @@ def test_command_resolver():
     )
     expected = ["ffmpeg", "-i", src_file_path, "-c:v", "copy", "-c:a", "copy"]
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolver.resolve(req) == expected
+    assert resolver.resolve(ereq(opts)) == expected
 
-    req = EncodingRequest(
-        srcFilePath=src_file_path,
-        outFilePath=out_file_path,
+    opts = EncodingOptions(
         videoScale=None,
         videoFrame=30,
         audioBitrateKb=None,
@@ -68,11 +65,9 @@ def test_command_resolver():
     )
     expected = ["ffmpeg", "-i", src_file_path, "-c:v", "copy", "-vf", "fps=30", "-c:a", "copy"]
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolver.resolve(req) == expected
+    assert resolver.resolve(ereq(opts)) == expected
 
-    req = EncodingRequest(
-        srcFilePath=src_file_path,
-        outFilePath=out_file_path,
+    opts = EncodingOptions(
         videoCodec="av1",  # type: ignore
         videoQuality=23,
         videoPreset="4",
@@ -88,4 +83,4 @@ def test_command_resolver():
     expected.extend(["-svtav1-params", f"mbr=3000"])
     expected.extend(["-c:a", "copy"])
     expected.extend(["-v", "warning", "-progress", "-", out_file_path])
-    assert resolver.resolve(req) == expected
+    assert resolver.resolve(ereq(opts)) == expected
