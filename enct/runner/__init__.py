@@ -3,10 +3,9 @@ import sys
 
 from .encoding_config import EncodingConfig, EstimateConfig
 from .encoding_runner import EncodingRunner
+from .suffix_resolver import EncodingSuffixResolver
 
-targets = [
-    "encoding_executor",
-]
+targets = ["encoding_config", "encoding_runner", "suffix_resolver"]
 if os.getenv("PY_ENV") != "prod":
     for name in list(sys.modules.keys()):
         for target in targets:

@@ -13,10 +13,6 @@ fake_checker = SizeRatioCheckerFake()
 estimator = EncodingQualityEstimator(checker=fake_checker)
 
 
-def est(priority: EstimatePriority, quality_range: tuple[int, int], size_ratio_range: tuple[float, float]):
-    return EstimateRequest(priority=priority, qualityRange=quality_range, sizeRatioRange=size_ratio_range)
-
-
 # --- 1. 성공 케이스 (Success Cases) ---
 
 
@@ -129,3 +125,7 @@ async def test_raises_error_for_invalid_quality_range():
         await estimator.estimate(enc_req, est(comp, (30, 20), (0.9, 1.1)), ck_req)
     with pytest.raises(ValueError, match="Invalid size ratio range"):
         await estimator.estimate(enc_req, est(comp, (20, 30), (1.1, 0.9)), ck_req)
+
+
+def est(priority: EstimatePriority, quality_range: tuple[int, int], size_ratio_range: tuple[float, float]):
+    return EstimateRequest(priority=priority, qualityRange=quality_range, sizeRatioRange=size_ratio_range)

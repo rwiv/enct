@@ -42,6 +42,7 @@ class EncodingQualityEstimator:
             cur_quality = quality_list[mid]
 
             size_ratio = await self.__checker.check(enc_req, ck_req, cur_quality)
+            # print(f"quality: {cur_quality}, size_ratio: {size_ratio}")
 
             if est_req.size_ratio_range[0] <= size_ratio <= est_req.size_ratio_range[1]:
                 # 목표 범위에 맞는 quality 값을 찾음
