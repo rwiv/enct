@@ -23,17 +23,16 @@ class SizeRatioCheckerImpl(SizeRatioChecker):
 
         ratio_sum = 0
         for start, end in divide_time_range("0", vid_info.duration, ck_req.n_parts):
-            new_time_range = get_sub_time_range(start, end, ck_req.enc_duration)
-
             src_req = enc_req.to_copy_req()
             src_req.out_file_path = path_join(self.__tmp_dir_path, f"{uuid.uuid4()}.{ext}")
-            src_req.opts.time_range = new_time_range
+            src_req.opts.time_range = get_sub_time_range(start, end, ck_req.enc_duration)
             await self.__encoder.encode(req=src_req, logging=False)
 
             out_req = enc_req.model_copy(deep=True)
-            out_req.opts.video_quality = quality
+            out_req.src_file_path = src_req.out_file_path
             out_req.out_file_path = path_join(self.__tmp_dir_path, f"{uuid.uuid4()}.{ext}")
-            out_req.opts.time_range = new_time_range
+            out_req.opts.video_quality = quality
+            out_req.opts.time_range = None
             await self.__encoder.encode(req=out_req, logging=False)
 
             size_ratio = await divide_size_ratio(out_req.out_file_path, src_req.out_file_path)
