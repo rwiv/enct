@@ -8,7 +8,7 @@ from ..external.notifier import UntfConfig
 class Env(BaseModel):
     env: constr(min_length=1)
     config_path: constr(min_length=1) | None = None
-    untf: UntfConfig
+    untf: UntfConfig | None = None
 
 
 def get_env() -> Env:
@@ -24,8 +24,9 @@ def get_env() -> Env:
 
 
 def read_untf_env():
-    return UntfConfig(
-        endpoint=os.getenv("UNTF_ENDPOINT"),
-        api_key=os.getenv("UNTF_API_KEY"),
-        topic=os.getenv("UNTF_TOPIC"),
-    )
+    endpoint = os.getenv("UNTF_ENDPOINT") or None
+    api_key = os.getenv("UNTF_API_KEY") or None
+    topic = os.getenv("UNTF_TOPIC") or None
+    if endpoint is None or api_key is None or topic is None:
+        return None
+    return UntfConfig(endpoint=endpoint, api_key=api_key, topic=topic)

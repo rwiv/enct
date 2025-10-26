@@ -6,8 +6,8 @@ from enct.estimate import SizeRatioCheckerFake, EncodingQualityEstimator, SizeCh
 enc_req = EncodingRequest(src_file_path="dummy.mp4", out_file_path="out.mp4", opts=EncodingOptions())
 ck_req = SizeCheckRequest(nParts=2, encDuration="12")
 
-quality = EstimatePriority.QUALITY
 comp = EstimatePriority.COMPRESSION
+quality = EstimatePriority.QUALITY
 
 fake_checker = SizeRatioCheckerFake()
 estimator = EncodingQualityEstimator(checker=fake_checker)
@@ -39,12 +39,12 @@ async def test_returns_valid_quality():
     # fmt: on
 
     # when/then
-    result_quality = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
-    assert result_quality == 13
-
-    # when/then
     result_quality = await estimator.estimate(enc_req, est(comp, q_range, sr_range), ck_req)
     assert result_quality == 15
+
+    # when/then
+    result_quality = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
+    assert result_quality == 13
 
 
 @pytest.mark.asyncio
@@ -60,11 +60,11 @@ async def test_finds_single_valid_quality():
     fake_checker.set_out_map(out_map)
 
     # when/then (어떤 우선순위든 동일한 결과를 반환해야 함)
-    result_for_quality = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
-    assert result_for_quality == 25
-
     result_for_compression = await estimator.estimate(enc_req, est(comp, q_range, sr_range), ck_req)
     assert result_for_compression == 25
+
+    result_for_quality = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
+    assert result_for_quality == 25
 
 
 @pytest.mark.asyncio
@@ -72,20 +72,9 @@ async def test_finds_optimal_quality_at_boundaries():
     """
     탐색 범위의 경계값이 최적의 quality 값인 경우를 테스트
     """
-    # given: 하한 경계값이 정답인 경우 (품질 우선)
+    # given: 상한 경계값이 정답인 경우 (압축률 우선)
     q_range = (20, 30)
     sr_range = (0.8, 1.2)
-    out_map_lower = {q: 0.7 for q in range(20, 31)}
-    out_map_lower[20] = 1.1  # 하한 경계값만 유효
-    fake_checker.set_out_map(out_map_lower)
-
-    # when
-    result_lower = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
-
-    # then
-    assert result_lower == 20
-
-    # given: 상한 경계값이 정답인 경우 (압축률 우선)
     out_map_upper = {q: 1.3 for q in range(20, 31)}
     out_map_upper[30] = 0.9  # 상한 경계값만 유효
     fake_checker.set_out_map(out_map_upper)
@@ -95,6 +84,17 @@ async def test_finds_optimal_quality_at_boundaries():
 
     # then
     assert result_upper == 30
+
+    # given: 하한 경계값이 정답인 경우 (품질 우선)
+    out_map_lower = {q: 0.7 for q in range(20, 31)}
+    out_map_lower[20] = 1.1  # 하한 경계값만 유효
+    fake_checker.set_out_map(out_map_lower)
+
+    # when
+    result_lower = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
+
+    # then
+    assert result_lower == 20
 
 
 # --- 2. 실패 및 예외 케이스 (Failure & Exception Cases) ---
@@ -113,7 +113,7 @@ async def test_raises_error_when_no_valid_quality_found():
 
     # when/then
     with pytest.raises(ValueError, match="Quality estimation failed"):
-        await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
+        await estimator.estimate(enc_req, est(comp, q_range, sr_range), ck_req)
 
 
 @pytest.mark.asyncio
@@ -126,6 +126,6 @@ async def test_raises_error_for_invalid_quality_range():
 
     # when/then
     with pytest.raises(ValueError, match="Invalid quality range"):
-        await estimator.estimate(enc_req, est(quality, (30, 20), (0.9, 1.1)), ck_req)
+        await estimator.estimate(enc_req, est(comp, (30, 20), (0.9, 1.1)), ck_req)
     with pytest.raises(ValueError, match="Invalid size ratio range"):
-        await estimator.estimate(enc_req, est(quality, (20, 30), (1.1, 0.9)), ck_req)
+        await estimator.estimate(enc_req, est(comp, (20, 30), (1.1, 0.9)), ck_req)

@@ -11,5 +11,7 @@ from enct.external.notifier import UntfNotifier
 @pytest.mark.asyncio
 async def test_untf():
     env = get_env()
+    if env.untf is None:
+        raise ValueError("untf is not set")
     notifier = UntfNotifier(env.untf)
     await notifier.notify("test")

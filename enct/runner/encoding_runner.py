@@ -20,7 +20,7 @@ class EncodingRunner:
         self.src_dir_path = self.conf.src_dir_path
         self.out_dir_path = self.conf.out_dir_path
         self.tmp_dir_path = self.conf.tmp_dir_path
-        self.notifier = create_notifier(env=env.env, conf=env.untf)
+        self.notifier = create_notifier(env=env.env, conf=env.untf) if env.untf is not None else None
         self.encoder = VideoEncoderImpl()
         checker = SizeRatioCheckerImpl(encoder=self.encoder, tmp_dir_path=self.tmp_dir_path)
         self.estimator = EncodingQualityEstimator(checker=checker)
@@ -32,7 +32,8 @@ class EncodingRunner:
         for file_path in await listdir_recur(self.src_dir_path):
             await self.__encode_one(file_path)
 
-        await self.notifier.notify(f"Encoding Completed: {self.src_dir_path}")
+        if self.notifier is not None:
+            await self.notifier.notify(f"Encoding Completed: {self.src_dir_path}")
         log.info(f"Encoding Completed: {self.src_dir_path}")
 
     async def __encode_one(self, file_path: str):
@@ -73,5 +74,6 @@ class EncodingRunner:
             await move_file(tmp_out_path, out_file_path)
         except Exception as e:
             await aios.remove(tmp_src_path)
-            await self.notifier.notify(f"Failed to encoding: {sub_path}, err={e}")
+            if self.notifier is not None:
+                await self.notifier.notify(f"Failed to encoding: {sub_path}, err={e}")
             raise

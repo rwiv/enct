@@ -7,8 +7,8 @@ from ..encoder import EncodingRequest
 
 
 class EstimatePriority(Enum):
-    QUALITY = "quality"
     COMPRESSION = "compression"
+    QUALITY = "quality"
 
 
 class EstimateRequest(BaseModel):
