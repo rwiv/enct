@@ -11,6 +11,8 @@ from .video_encoder import EncodingResult, VideoEncoder
 from ..ffmpeg import FfmpegEncodingOutputFilter, FfmpegEncodingProgressParser
 from ..utils import divide_size_ratio
 
+WAIT_TIMEOUT_SEC = 1.0
+
 
 class VideoEncoderImpl(VideoEncoder):
     def __init__(self):
@@ -36,7 +38,7 @@ class VideoEncoderImpl(VideoEncoder):
         speed_cnt = 0
 
         while True:
-            chunk = await process.stdout.read(sys.maxsize)
+            chunk = await asyncio.wait_for(process.stdout.read(sys.maxsize), WAIT_TIMEOUT_SEC)
             if not chunk:
                 break
             info = self.__parser.parse(chunk)
