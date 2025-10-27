@@ -72,7 +72,7 @@ class EncodingRunner:
             await aios.remove(tmp_src_path)
 
             sub_base_path = dirpath(sub_path)
-            filename = f"{file_stem} {self.__suffix_resolver.resolve(req.opts)}.{ext}"
+            filename = f"{file_stem} {self.__suffix_resolver.resolve(req.opts, enc_ret.size_ratio)}.{ext}"
             out_file_path = path_join(self.__conf.out_dir_path, sub_base_path, filename)
 
             await check_dir_async(out_file_path)

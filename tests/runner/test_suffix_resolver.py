@@ -10,7 +10,7 @@ def test_suffix_resolver():
         video_quality=34,
         video_preset="p4",
     )
-    assert resolver.resolve(opts) == "[gpu-34-p4]"
+    assert resolver.resolve(opts, size_ratio=0.3257) == "[gpu-34-p4=0.326]"
 
     opts = new_opts(
         enabled_gpu=True,
@@ -18,7 +18,7 @@ def test_suffix_resolver():
         video_preset="p4",
         video_frame=30,
     )
-    assert resolver.resolve(opts) == "[gpu-34-p4-30fps]"
+    assert resolver.resolve(opts, size_ratio=0.3254) == "[gpu-34-p4-30fps=0.325]"
 
     opts = new_opts(
         enabled_gpu=False,
@@ -27,7 +27,7 @@ def test_suffix_resolver():
         video_frame=30,
         video_max_bitrate=3000,
     )
-    assert resolver.resolve(opts) == "[cpu-28-5-3000k-30fps]"
+    assert resolver.resolve(opts, size_ratio=0.3297) == "[cpu-28-5-3000k-30fps=0.330]"
 
 
 def new_opts(

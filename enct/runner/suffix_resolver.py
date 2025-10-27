@@ -2,7 +2,7 @@ from ..encoder import EncodingOptions
 
 
 class EncodingSuffixResolver:
-    def resolve(self, opts: EncodingOptions, delimiter: str = "-") -> str:
+    def resolve(self, opts: EncodingOptions, size_ratio: float, delimiter: str = "-") -> str:
         result = "["
 
         result += "gpu" if opts.enable_gpu else "cpu"
@@ -25,5 +25,6 @@ class EncodingSuffixResolver:
             result += delimiter
 
         result = result[: -len(delimiter)]
+        result += f"={size_ratio:.3f}"
         result += "]"
         return result
