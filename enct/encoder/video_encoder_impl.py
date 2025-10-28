@@ -11,7 +11,7 @@ from .video_encoder import EncodingResult, VideoEncoder
 from ..ffmpeg import FfmpegEncodingOutputFilter, FfmpegEncodingProgressParser
 from ..utils import divide_size_ratio
 
-WAIT_TIMEOUT_SEC = 2.0
+WAIT_TIMEOUT_SEC = 10.0
 
 
 class VideoEncoderImpl(VideoEncoder):

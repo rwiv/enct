@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 
 from aiofiles import os as aios
@@ -78,7 +79,8 @@ class EncodingRunner:
             await check_dir_async(out_file_path)
             await move_file(tmp_out_path, out_file_path)
         except Exception as e:
-            await aios.remove(tmp_src_path)
             if self.__notifier is not None:
                 await self.__notifier.notify(f"Failed to encoding: {sub_path}, err={e}")
+            await asyncio.sleep(1)
+            await aios.remove(tmp_src_path)
             raise
