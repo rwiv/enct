@@ -7,6 +7,7 @@ from pyutils import log, exec_process, cur_duration, check_returncode
 
 from .command_resolver import FfmpegCommandResolver
 from .encoding_request import EncodingRequest
+from .exceptions import EncoderFailureException, EmptyEncodedException
 from .video_encoder import EncodingResult, VideoEncoder
 from ..ffmpeg import FfmpegEncodingOutputFilter, FfmpegEncodingProgressParser
 from ..utils import divide_size_ratio
@@ -60,8 +61,14 @@ class VideoEncoderImpl(VideoEncoder):
         stderr = self.__out_filter.filtered_stderr(stderr_raw)
         if stderr is not None and len(stderr.filtered) > 0:
             await aios.remove(req.out_file_path)
-            log.error("Encoding failed with error", {"err": stderr.filtered})
-            raise RuntimeError("Encoding failed with error")
+            if "Output file is empty, nothing was encoded" in stderr.filtered:
+                err_message = "Detect empty video content"
+                log.error(err_message, {"err": stderr.filtered})
+                raise EmptyEncodedException(err_message, stderr=stderr.filtered)
+            else:
+                err_message = "Encoding failed with error"
+                log.error(err_message, {"err": stderr.filtered})
+                raise EncoderFailureException(err_message, stderr=stderr.filtered)
 
         return EncodingResult(
             out_file_path=req.out_file_path,

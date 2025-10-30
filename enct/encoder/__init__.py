@@ -3,12 +3,14 @@ import sys
 
 from .command_resolver import FfmpegCommandResolver
 from .encoding_request import EncodingOptions, EncodingRequest, VideoCodec, VideoScale, AudioCodec, TimeRange
+from .exceptions import EncoderFailureException, EmptyEncodedException
 from .video_encoder import VideoEncoder
 from .video_encoder_impl import VideoEncoderImpl
 
 targets = [
     "command_resolver",
     "encoding_request",
+    "exceptions",
     "output_filter",
     "progress_parser",
     "video_encoder",

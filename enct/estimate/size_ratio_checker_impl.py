@@ -1,11 +1,11 @@
 import uuid
 
 from aiofiles import os as aios
-from pyutils import path_join, get_ext
+from pyutils import path_join, get_ext, log
 
 from .size_ratio_checker import SizeRatioChecker, SizeCheckRequest
 from .time_range_utils import get_sub_time_range
-from ..encoder import VideoEncoder, EncodingRequest
+from ..encoder import VideoEncoder, EncodingRequest, EmptyEncodedException
 from ..ffmpeg import get_info
 from ..utils import divide_time_range, divide_size_ratio
 
@@ -29,7 +29,13 @@ class SizeRatioCheckerImpl(SizeRatioChecker):
             src_req = enc_req.to_copy_req()
             src_req.out_file_path = path_join(self.__tmp_dir_path, f"{uuid.uuid4()}.{ext}")
             src_req.opts.time_range = get_sub_time_range(start, end, ck_req.enc_duration)
-            await self.__encoder.encode(req=src_req, logging=False)
+            try:
+                await self.__encoder.encode(req=src_req, logging=False)
+            except EmptyEncodedException:
+                log.warn("skip this empty range", {"start": start, "end": end})
+                continue
+            except Exception as e:
+                raise e
 
             out_req = enc_req.model_copy(deep=True)
             out_req.src_file_path = src_req.out_file_path
