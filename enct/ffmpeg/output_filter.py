@@ -28,6 +28,9 @@ FILTER_KEYWORDS = [
 
     "co located POCs unavailable",
     "mmco: unref short failure",
+
+    "unspecified pixel format",
+    "Consider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options",
 ]
 # fmt: on
 
