@@ -1,6 +1,6 @@
-# enct (encoding task)
+# enct
 
-최적의 화질과 용량을 추정해 비디오를 인코딩하는 ffmpeg 기반 인코딩 자동화 도구입니다.
+enct(**enc**odig **t**ask)는 최적의 화질과 용량을 추정해 비디오를 인코딩하는 ffmpeg 기반 인코딩 자동화 도구입니다.
 
 ## ✨ Features
 
