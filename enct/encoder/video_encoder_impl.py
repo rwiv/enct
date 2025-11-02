@@ -10,7 +10,7 @@ from .encoding_request import EncodingRequest
 from .exceptions import EncoderFailureException, EmptyEncodedException
 from .video_encoder import EncodingResult, VideoEncoder
 from ..ffmpeg import FfmpegEncodingOutputFilter, FfmpegEncodingProgressParser
-from ..utils import divide_size_ratio
+from ..utils import divide_file_size
 
 WAIT_TIMEOUT_SEC = 10.0
 
@@ -77,5 +77,5 @@ class VideoEncoderImpl(VideoEncoder):
             speed_avg=speed_sum / speed_cnt if speed_cnt > 0 else None,
             duration=cur_duration(start_time),
             stderr=stderr,
-            size_ratio=await divide_size_ratio(req.out_file_path, req.src_file_path),
+            size_ratio=await divide_file_size(req.out_file_path, req.src_file_path),
         )

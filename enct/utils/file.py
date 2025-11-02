@@ -95,7 +95,7 @@ async def open_tar(tar_path: str, out_dir_path: str):
     await asyncio.to_thread(_open_tar, tar_path, out_dir_path)
 
 
-async def divide_size_ratio(a_path: str, b_path: str):
+async def divide_file_size(a_path: str, b_path: str):
     a_stat, b_stat = await asyncio.gather(aios.stat(a_path), aios.stat(b_path))
 
     if b_stat.st_size == 0:

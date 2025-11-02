@@ -7,7 +7,7 @@ from .size_ratio_checker import SizeRatioChecker, EstimationSampleOption
 from .time_range_utils import get_sub_time_range
 from ..encoder import VideoEncoder, EncodingRequest, EmptyEncodedException
 from ..ffmpeg import get_info
-from ..utils import divide_time_range, divide_size_ratio
+from ..utils import divide_time_range, divide_file_size
 
 
 class SizeRatioCheckerImpl(SizeRatioChecker):
@@ -44,7 +44,7 @@ class SizeRatioCheckerImpl(SizeRatioChecker):
             out_req.opts.time_range = None
             await self.__encoder.encode(req=out_req, logging=False)
 
-            size_ratio = await divide_size_ratio(out_req.out_file_path, src_req.out_file_path)
+            size_ratio = await divide_file_size(out_req.out_file_path, src_req.out_file_path)
             ratio_sum += size_ratio
 
             await aios.remove(src_req.out_file_path)
