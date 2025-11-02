@@ -66,7 +66,7 @@ encoding:
   # videoFrame: 30                               # 프레임 레이트 변경 (선택 사항)
   # videoMaxBitrate: 6000                        # 최대 비디오 비트레이트 (선택 사항)
   # videoScale: {width: 1280, height: 720}       # 해상도 변경 (선택 사항)
-  # timeRange: {start: "30.54", end: "634:21"}   # 비디오 자르기 (선택 사항)
+  # timeRange: {start: "30.54", end: "634.21"}   # 비디오 자르기 (선택 사항)
 
 # --- 퀄리티 추정 기능 설정 ---
 estimation:
