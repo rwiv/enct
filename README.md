@@ -10,7 +10,7 @@ ffmpeg에서 지원하는 다양한 인코딩 옵션들을 제공합니다.
 
 - **최신 코덱 지원**: `HEVC (H.265)`, `AV1` 등 최신 비디오 코덱을 지원하여 높은 압축률과 뛰어난 화질을 제공합니다.
 - **GPU 가속**: NVIDIA 그래픽카드의 NVENC를 활용한 GPU 가속을 지원합니다.
-- **다양한 인코딩 옵션**: 해상도 및 프레임 변경, 비디오 자르기 등 FFmpeg의 기능들을 손쉽게 설정하여 사용할 수 있습니다.
+- **다양한 인코딩 옵션**: 해상도 및 프레임 레이트 변경, 비디오 자르기 등 FFmpeg의 기능들을 손쉽게 설정하여 사용할 수 있습니다.
 
 ### 2. 인코딩 퀄리티 추정 (Encoding Quality Estimation) 기능
 
@@ -56,28 +56,28 @@ tmpDirPath: <임시 파일 생성 폴더 경로>
 
 # --- 인코딩 설정 ---
 encoding:
-  enableGpu: true          # GPU 가속 사용 여부 (true/false)
-  videoCodec: av1          # 비디오 코덱 (h265, av1 등)
-  videoQuality: ~          # 퀄리티 추정 기능을 사용할 경우 '~' 또는 비워둠
-  # videoQuality: 36       # 특정 퀄리티 값으로 고정하려면 주석 해제 후 값 입력
-  videoPreset: "p4"        # 인코딩 프리셋 (인코더에 따라 다름)
-  # audioCodec: opus         # 오디오 코덱 (선택 사항)
-  # audioBitrateKb: 128k     # 오디오 비트레이트 (선택 사항)
-  # videoFrame: 30           # 프레임 변경 (선택 사항)
-  # videoMaxBitrate: 6000    # 최대 비디오 비트레이트 (선택 사항)
-  # videoScale: {width: 1280, height: 720} # 해상도 변경 (선택 사항)
-  # timeRange: {start: "30.54", end: "634:21"}  # 비디오 자르기 (선택 사항)
+  enableGpu: true                                # GPU 가속 사용 여부 (true/false)
+  videoCodec: av1                                # 비디오 코덱 (h265, av1 등)
+  videoQuality: ~                                # 퀄리티 추정 기능을 사용할 경우 '~' 또는 비워둠
+  # videoQuality: 36                             # 특정 퀄리티 값으로 고정하려면 주석 해제 후 값 입력
+  videoPreset: "p4"                              # 인코딩 프리셋 (인코더에 따라 다름)
+  # audioCodec: opus                             # 오디오 코덱 (선택 사항)
+  # audioBitrateKb: 128k                         # 오디오 비트레이트 (선택 사항)
+  # videoFrame: 30                               # 프레임 레이트 변경 (선택 사항)
+  # videoMaxBitrate: 6000                        # 최대 비디오 비트레이트 (선택 사항)
+  # videoScale: {width: 1280, height: 720}       # 해상도 변경 (선택 사항)
+  # timeRange: {start: "30.54", end: "634:21"}   # 비디오 자르기 (선택 사항)
 
 # --- 퀄리티 추정 기능 설정 ---
 estimation:
-  enabled: true            # 퀄리티 추정 기능 활성화 여부
+  enabled: true                    # 퀄리티 추정 기능 활성화 여부
   request:
-    priority: compression    # 우선순위 모드 (compression: 용량 우선 / quality: 화질 우선)
-    qualityRange: [20, 48]   # 퀄리티 탐색 범위
-    sizeRatioRange: [0.32, 0.36] # 목표 원본 대비 용량비 범위
+    priority: compression          # 우선순위 모드 (compression: 용량 우선 / quality: 화질 우선)
+    qualityRange: [20, 48]         # 퀄리티 탐색 범위
+    sizeRatioRange: [0.32, 0.36]   # 목표 원본 대비 용량비 범위
   sampleOption:
-    size: 10             # 비디오를 나눌 샘플 개수
-    duration: "30"      # 각 샘플에서 테스트 인코딩을 진행할 시간 (초)
+    size: 10                       # 비디오를 나눌 샘플 개수
+    duration: "30"                 # 각 샘플에서 테스트 인코딩을 진행할 시간 (초)
 ```
 
 ## ▶️ Run
