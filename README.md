@@ -66,19 +66,18 @@ encoding:
   # videoFrame: 30           # 프레임 변경 (선택 사항)
   # videoMaxBitrate: 6000    # 최대 비디오 비트레이트 (선택 사항)
   # videoScale: {width: 1280, height: 720} # 해상도 변경 (선택 사항)
-  # timeRange: {start: 30.54, end: 634:21}  # 비디오 자르기 (선택 사항)
+  # timeRange: {start: "30.54", end: "634:21"}  # 비디오 자르기 (선택 사항)
 
 # --- 퀄리티 추정 기능 설정 ---
-estimate:
+estimation:
   enabled: true            # 퀄리티 추정 기능 활성화 여부
-  priority: compression    # 우선순위 모드 (compression: 용량 우선 / quality: 화질 우선)
-  qualityRange: [20, 48]   # 퀄리티 탐색 범위
-  sizeRatioRange: [0.32, 0.36] # 목표 원본 대비 용량비 범위
-
-  # --- 퀄리티 추정을 위한 샘플 인코딩 설정 ---
-  check:
-    nParts: 10             # 비디오를 나눌 샘플 개수
-    encDuration: "30"      # 각 샘플에서 테스트 인코딩을 진행할 시간 (초)
+  request:
+    priority: compression    # 우선순위 모드 (compression: 용량 우선 / quality: 화질 우선)
+    qualityRange: [20, 48]   # 퀄리티 탐색 범위
+    sizeRatioRange: [0.32, 0.36] # 목표 원본 대비 용량비 범위
+  sampleOption:
+    size: 10             # 비디오를 나눌 샘플 개수
+    duration: "30"      # 각 샘플에서 테스트 인코딩을 진행할 시간 (초)
 ```
 
 ## ▶️ Run

@@ -38,7 +38,7 @@ class EncodingRunner:
         log.info(f"Encoding Completed: {self.__conf.src_dir_path}")
 
     async def __encode_one(self, file_path: str):
-        est = self.__conf.estimate
+        est = self.__conf.estimation
 
         sub_path = file_path.replace(self.__conf.src_dir_path, "")
         file_stem = stem(file_path)
@@ -59,7 +59,7 @@ class EncodingRunner:
             )
 
             if est is not None and est.enabled:
-                quality = await self.__estimator.estimate(enc_req=req, est_req=est.estimate, ck_req=est.check)
+                quality = await self.__estimator.estimate(enc_req=req, est_req=est.request, smp_opt=est.sample_option)
                 req.opts.video_quality = quality
 
             log.info("Starting encoding", req.to_log_attr())

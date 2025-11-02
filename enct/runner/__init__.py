@@ -1,7 +1,7 @@
 import os
 import sys
 
-from .encoding_config import EncodingConfig, EstimateConfig
+from .encoding_config import EncodingConfig, EstimationConfig
 from .encoding_runner import EncodingRunner
 from .suffix_resolver import EncodingSuffixResolver
 

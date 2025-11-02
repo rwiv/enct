@@ -1,10 +1,16 @@
 import pytest
 
 from enct.encoder import EncodingRequest, EncodingOptions
-from enct.estimate import SizeRatioCheckerFake, EncodingQualityEstimator, SizeCheckRequest, EstimateRequest, EstimatePriority
+from enct.estimate import (
+    SizeRatioCheckerFake,
+    EncodingQualityEstimator,
+    EstimationSampleOption,
+    EstimationRequest,
+    EstimatePriority,
+)
 
 enc_req = EncodingRequest(src_file_path="dummy.mp4", out_file_path="out.mp4", opts=EncodingOptions())
-ck_req = SizeCheckRequest(nParts=2, encDuration="12")
+smp_opt = EstimationSampleOption(size=2, duration="12")
 
 comp = EstimatePriority.COMPRESSION
 quality = EstimatePriority.QUALITY
@@ -35,11 +41,11 @@ async def test_returns_valid_quality():
     # fmt: on
 
     # when/then
-    result_quality = await estimator.estimate(enc_req, est(comp, q_range, sr_range), ck_req)
+    result_quality = await estimator.estimate(enc_req, est(comp, q_range, sr_range), smp_opt)
     assert result_quality == 15
 
     # when/then
-    result_quality = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
+    result_quality = await estimator.estimate(enc_req, est(quality, q_range, sr_range), smp_opt)
     assert result_quality == 13
 
 
@@ -56,10 +62,10 @@ async def test_finds_single_valid_quality():
     fake_checker.set_out_map(out_map)
 
     # when/then (어떤 우선순위든 동일한 결과를 반환해야 함)
-    result_for_compression = await estimator.estimate(enc_req, est(comp, q_range, sr_range), ck_req)
+    result_for_compression = await estimator.estimate(enc_req, est(comp, q_range, sr_range), smp_opt)
     assert result_for_compression == 25
 
-    result_for_quality = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
+    result_for_quality = await estimator.estimate(enc_req, est(quality, q_range, sr_range), smp_opt)
     assert result_for_quality == 25
 
 
@@ -76,7 +82,7 @@ async def test_finds_optimal_quality_at_boundaries():
     fake_checker.set_out_map(out_map_upper)
 
     # when
-    result_upper = await estimator.estimate(enc_req, est(comp, q_range, sr_range), ck_req)
+    result_upper = await estimator.estimate(enc_req, est(comp, q_range, sr_range), smp_opt)
 
     # then
     assert result_upper == 30
@@ -87,7 +93,7 @@ async def test_finds_optimal_quality_at_boundaries():
     fake_checker.set_out_map(out_map_lower)
 
     # when
-    result_lower = await estimator.estimate(enc_req, est(quality, q_range, sr_range), ck_req)
+    result_lower = await estimator.estimate(enc_req, est(quality, q_range, sr_range), smp_opt)
 
     # then
     assert result_lower == 20
@@ -109,7 +115,7 @@ async def test_raises_error_when_no_valid_quality_found():
 
     # when/then
     with pytest.raises(ValueError, match="Quality estimation failed"):
-        await estimator.estimate(enc_req, est(comp, q_range, sr_range), ck_req)
+        await estimator.estimate(enc_req, est(comp, q_range, sr_range), smp_opt)
 
 
 @pytest.mark.asyncio
@@ -122,10 +128,10 @@ async def test_raises_error_for_invalid_quality_range():
 
     # when/then
     with pytest.raises(ValueError, match="Invalid quality range"):
-        await estimator.estimate(enc_req, est(comp, (30, 20), (0.9, 1.1)), ck_req)
+        await estimator.estimate(enc_req, est(comp, (30, 20), (0.9, 1.1)), smp_opt)
     with pytest.raises(ValueError, match="Invalid size ratio range"):
-        await estimator.estimate(enc_req, est(comp, (20, 30), (1.1, 0.9)), ck_req)
+        await estimator.estimate(enc_req, est(comp, (20, 30), (1.1, 0.9)), smp_opt)
 
 
 def est(priority: EstimatePriority, quality_range: tuple[int, int], size_ratio_range: tuple[float, float]):
-    return EstimateRequest(priority=priority, qualityRange=quality_range, sizeRatioRange=size_ratio_range)
+    return EstimationRequest(priority=priority, qualityRange=quality_range, sizeRatioRange=size_ratio_range)

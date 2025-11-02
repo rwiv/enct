@@ -1,8 +1,8 @@
 import os
 import sys
 
-from .quality_estimator import EncodingQualityEstimator, EstimateRequest, EstimatePriority
-from .size_ratio_checker import SizeRatioChecker, SizeRatioCheckerFake, SizeCheckRequest
+from .quality_estimator import EncodingQualityEstimator, EstimationRequest, EstimatePriority
+from .size_ratio_checker import SizeRatioChecker, SizeRatioCheckerFake, EstimationSampleOption
 from .size_ratio_checker_impl import SizeRatioCheckerImpl
 from .time_range_utils import get_sub_time_range
 

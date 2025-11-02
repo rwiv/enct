@@ -2,7 +2,7 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
-from .size_ratio_checker import SizeRatioChecker, SizeCheckRequest
+from .size_ratio_checker import SizeRatioChecker, EstimationSampleOption
 from ..encoder import EncodingRequest
 
 
@@ -11,7 +11,7 @@ class EstimatePriority(Enum):
     QUALITY = "quality"
 
 
-class EstimateRequest(BaseModel):
+class EstimationRequest(BaseModel):
     priority: EstimatePriority
     quality_range: tuple[int, int] = Field(alias="qualityRange")
     size_ratio_range: tuple[float, float] = Field(alias="sizeRatioRange")
@@ -24,8 +24,8 @@ class EncodingQualityEstimator:
     async def estimate(
         self,
         enc_req: EncodingRequest,
-        est_req: EstimateRequest,
-        ck_req: SizeCheckRequest,
+        est_req: EstimationRequest,
+        smp_opt: EstimationSampleOption,
     ) -> int:
         quality_list = list(range(est_req.quality_range[0], est_req.quality_range[1] + 1))
         if not quality_list:
@@ -41,7 +41,7 @@ class EncodingQualityEstimator:
             mid = (left + right) // 2
             cur_quality = quality_list[mid]
 
-            size_ratio = await self.__checker.check(enc_req, ck_req, cur_quality)
+            size_ratio = await self.__checker.check(enc_req, smp_opt, cur_quality)
             # print(f"quality: {cur_quality}, size_ratio: {size_ratio}")
 
             if est_req.size_ratio_range[0] <= size_ratio <= est_req.size_ratio_range[1]:

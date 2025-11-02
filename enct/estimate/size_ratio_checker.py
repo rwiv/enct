@@ -6,11 +6,11 @@ from pydantic import BaseModel, field_validator, Field
 from ..encoder import EncodingRequest
 
 
-class SizeCheckRequest(BaseModel):
-    n_parts: int = Field(alias="nParts")
-    enc_duration: str = Field(alias="encDuration")
+class EstimationSampleOption(BaseModel):
+    size: int
+    duration: str
 
-    @field_validator("enc_duration")
+    @field_validator("duration")
     @classmethod
     def check_integer_string(cls, v: str) -> str:
         try:
@@ -22,7 +22,7 @@ class SizeCheckRequest(BaseModel):
 
 class SizeRatioChecker(abc.ABC):
     @abstractmethod
-    async def check(self, enc_req: EncodingRequest, ck_req: SizeCheckRequest, quality: int) -> float:
+    async def check(self, enc_req: EncodingRequest, ck_req: EstimationSampleOption, quality: int) -> float:
         """
         :param enc_req: video encoding request
         :param ck_req: size check request
@@ -36,7 +36,7 @@ class SizeRatioCheckerFake(SizeRatioChecker):
     def __init__(self):
         self.__out = {}
 
-    async def check(self, enc_req: EncodingRequest, ck_req: SizeCheckRequest, quality: int) -> float:
+    async def check(self, enc_req: EncodingRequest, ck_req: EstimationSampleOption, quality: int) -> float:
         return self.__out[quality]
 
     def set_out_map(self, out: dict[int, float]):

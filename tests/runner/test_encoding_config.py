@@ -1,22 +1,22 @@
 from enct.encoder import EncodingOptions
-from enct.estimate import SizeCheckRequest, EstimateRequest, EstimatePriority
-from enct.runner import EncodingConfig, EstimateConfig
+from enct.estimate import EstimationSampleOption, EstimationRequest, EstimatePriority
+from enct.runner import EncodingConfig, EstimationConfig
 
 
 def test_encoding_config():
-    est = EstimateConfig(
+    est = EstimationConfig(
         enabled=False,
-        estimate=EstimateRequest(
+        request=EstimationRequest(
             priority=EstimatePriority.QUALITY,
             qualityRange=(1, 2),
             sizeRatioRange=(1, 2),
         ),
-        check=SizeCheckRequest(nParts=3, encDuration="10"),
+        sampleOption=EstimationSampleOption(size=3, duration="10"),
     )
     EncodingConfig(
         srcDirPath="a",
         outDirPath="b",
         tmpDirPath="c",
         encoding=EncodingOptions(),
-        estimate=est,
+        estimation=est,
     )

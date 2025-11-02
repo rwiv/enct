@@ -4,13 +4,13 @@ import yaml
 from pydantic import BaseModel, constr, Field
 
 from ..encoder import EncodingOptions
-from ..estimate import SizeCheckRequest, EstimateRequest
+from ..estimate import EstimationSampleOption, EstimationRequest
 
 
-class EstimateConfig(BaseModel):
+class EstimationConfig(BaseModel):
     enabled: bool
-    estimate: EstimateRequest
-    check: SizeCheckRequest
+    request: EstimationRequest
+    sample_option: EstimationSampleOption = Field(alias="sampleOption")
 
 
 class EncodingConfig(BaseModel):
@@ -18,7 +18,7 @@ class EncodingConfig(BaseModel):
     out_dir_path: constr(min_length=1) = Field(alias="outDirPath")
     tmp_dir_path: constr(min_length=1) = Field(alias="tmpDirPath")
     encoding: EncodingOptions
-    estimate: EstimateConfig | None = None
+    estimation: EstimationConfig | None = None
 
 
 def read_encoding_config(config_path: str) -> EncodingConfig:

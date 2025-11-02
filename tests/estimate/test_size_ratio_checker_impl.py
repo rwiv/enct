@@ -3,7 +3,7 @@ from aiofiles import os as aios
 from pyutils import path_join, find_project_root
 
 from enct.encoder import EncodingRequest, VideoEncoderImpl, VideoCodec, AudioCodec, EncodingOptions
-from enct.estimate import SizeRatioCheckerImpl, SizeCheckRequest
+from enct.estimate import SizeRatioCheckerImpl, EstimationSampleOption
 
 src_dir_path = path_join(find_project_root(), "dev", "test", "assets", "enc")
 tmp_dir_path = path_join(find_project_root(), "dev", "tmp")
@@ -33,6 +33,6 @@ async def test_size_ratio_checker_impl():
         out_file_path=path_join(tmp_dir_path, "x"),
         opts=opts,
     )
-    c_req = SizeCheckRequest(nParts=2, encDuration="12")
+    c_req = EstimationSampleOption(size=2, duration="12")
     size_ratio = await checker.check(enc_req, c_req, 48)
     print(size_ratio)
