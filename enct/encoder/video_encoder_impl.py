@@ -28,6 +28,7 @@ class VideoEncoderImpl(VideoEncoder):
         start_time = asyncio.get_event_loop().time()
 
         command = self.__cmd_resolver.resolve(req)
+        # log.debug("Encoding command", {"command": " ".join(command)})
         process = await exec_process(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         assert process.stdout is not None
 
